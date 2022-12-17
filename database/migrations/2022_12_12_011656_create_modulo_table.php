@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('mod_nombre', 100);
             $table->string('mod_url');
             $table->text('mod_descripcion')->nullable();
+            $table->string('mod_codigo', 5)->unique();
             $table->unsignedBigInteger('mod_padre_id')->nullable();
             $table->unsignedTinyInteger('mod_estado')->default(Modulo::ESTADO_INACTIVO);
             $table->unsignedTinyInteger('mod_eliminado')->default(Define::NO_ELIMINADO);

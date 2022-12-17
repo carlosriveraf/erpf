@@ -14,14 +14,18 @@ class ModuloSeeder extends Seeder
      */
     public function run()
     {
-
-        $modulo = Modulo::create([
+        Modulo::create([
             'mod_nombre' => 'Sistema',
             'mod_url' => '/sistema',
+            'mod_codigo' => '00001',
             'mod_estado' => Modulo::ESTADO_ACTIVO,
         ]);
-
-        $modulo->mod_id;
-        
+        Modulo::create([
+            'mod_nombre' => 'Módulos',
+            'mod_url' => '/modulos',
+            'mod_codigo' => '00002',
+            'mod_padre_id' => Modulo::firstWhere('mod_codigo', '=', '00001')->mod_id,
+            'mod_estado' => Modulo::ESTADO_ACTIVO,
+        ]);
     }
 }

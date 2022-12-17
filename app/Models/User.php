@@ -18,6 +18,8 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    const TABLE = 'users';
+
     const FORMATO_ESTADO_INACTIVO = 'INACTIVO';
     const ESTADO_INACTIVO = 0;
     const FORMATO_ESTADO_ACTIVO = 'ACTIVO';
@@ -40,10 +42,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
+        'usu_password',
+        'usu_remember_token',
+        'usu_two_factor_recovery_codes',
+        'usu_two_factor_secret',
     ];
 
     /**
@@ -52,7 +54,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'usu_email_verified_at' => 'datetime',
     ];
 
     /**
@@ -61,6 +63,20 @@ class User extends Authenticatable
      * @var array
      */
     protected $appends = [
-        'profile_photo_url',
+        'usu_profile_photo_url',
     ];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = self::TABLE;
+
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'usu_id';
 }

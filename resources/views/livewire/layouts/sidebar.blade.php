@@ -1,6 +1,9 @@
 <div id="dashboard_sidebar" x-show="showsidebar" class="fixed z-20 inset-0 top-[3.8125rem] right-auto w-[19.5rem] pb-10 px-8 overflow-y-auto">
     <nav id="nav" class="lg:text-sm lg:leading-6 relative">
         <ul>
+            <li class="mt-12 lg:mt-8">
+                <h5 class="mb-8 lg:mb-3 font-semibold text-slate-900 dark:text-slate-200">Inicio</h5>
+            </li>
             @foreach($modulos as $modulo)
             <li class="mt-12 lg:mt-8">
                 <h5 class="mb-8 lg:mb-3 font-semibold text-slate-900 dark:text-slate-200">{{$modulo->mod_nombre}}</h5>

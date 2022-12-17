@@ -16,26 +16,26 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('nombres', 100);
-            $table->string('apellido_paterno', 100);
-            $table->string('apellido_materno', 100);
-            $table->unsignedBigInteger('tdi_id');
-            $table->string('tdi_numero', 20);
-            $table->string('usuario', 100)->unique();
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+        Schema::create(User::TABLE, function (Blueprint $table) {
+            $table->id('usu_id');
+            $table->string('usu_nombres', 100);
+            $table->string('usu_apellido_paterno', 100);
+            $table->string('usu_apellido_materno', 100);
+            $table->unsignedBigInteger('usu_tdi_id');
+            $table->string('usu_tdi_numero', 20);
+            $table->string('usu_usuario', 100)->unique();
+            $table->string('usu_email')->unique();
+            $table->timestamp('usu_email_verified_at')->nullable();
+            $table->string('usu_password');
             $table->rememberToken();
-            $table->foreignId('current_team_id')->nullable();
-            $table->string('profile_photo_path', 2048)->nullable();
-            $table->unsignedTinyInteger('eliminado')->default(Define::NO_ELIMINADO);
-            $table->unsignedTinyInteger('estado')->default(User::ESTADO_INACTIVO);
+            $table->foreignId('usu_current_team_id')->nullable();
+            $table->string('usu_profile_photo_path', 2048)->nullable();
+            $table->unsignedTinyInteger('usu_eliminado')->default(Define::NO_ELIMINADO);
+            $table->unsignedTinyInteger('usu_estado')->default(User::ESTADO_INACTIVO);
             $table->timestamps();
 
-            $table->unique(['tdi_id', 'tdi_numero']);
-            $table->foreign('tdi_id')->references('tdi_id')->on(TipoDocumentoIdentidad::TABLE);
+            $table->unique(['usu_tdi_id', 'usu_tdi_numero']);
+            $table->foreign('usu_tdi_id')->references('tdi_id')->on(TipoDocumentoIdentidad::TABLE);
         });
     }
 
@@ -46,6 +46,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists(User::TABLE);
     }
 };

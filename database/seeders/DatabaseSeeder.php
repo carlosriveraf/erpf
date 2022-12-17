@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             TipoDocumentoIdentidadSeeder::class,
             UserSeeder::class,
             ModuloSeeder::class,
+            UsuarioModuloSeeder::class,
         ]);
     }
 }

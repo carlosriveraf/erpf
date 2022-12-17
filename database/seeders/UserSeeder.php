@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TipoDocumentoIdentidad;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,18 +16,16 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::insert([
-            [
-                'nombres' => 'Carlos Eduardo',
-                'apellido_paterno' => 'Rivera',
-                'apellido_materno' => 'Franco',
-                'tdi_id' => 2,
-                'tdi_numero' => '74415678',
-                'usuario' => 'carlos',
-                'email' => 'carlos_2017_1@hotmail.com',
-                'password' => Hash::make('123'),
-                'estado' => User::ESTADO_ACTIVO,
-            ],
+        User::create([
+            'usu_nombres' => 'Carlos Eduardo',
+            'usu_apellido_paterno' => 'Rivera',
+            'usu_apellido_materno' => 'Franco',
+            'usu_tdi_id' => TipoDocumentoIdentidad::firstWhere('tdi_codigo', '=', 1)->tdi_id,
+            'usu_tdi_numero' => '74415678',
+            'usu_usuario' => 'carlos',
+            'usu_email' => 'carlos_2017_1@hotmail.com',
+            'usu_password' => Hash::make('123'),
+            'usu_estado' => User::ESTADO_ACTIVO,
         ]);
     }
 }
