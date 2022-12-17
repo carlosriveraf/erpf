@@ -24,7 +24,8 @@
 
     <div class="overflow-hidden">
         <div class="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
-            @include('layouts.sidebar')
+            {{--@include('layouts.sidebar')--}}
+            @livewire('layouts.sidebar')
 
             <div id="dashboard_main">
                 <!-- <div id="dashboard_main" class="lg:pl-[19.5rem]"> -->

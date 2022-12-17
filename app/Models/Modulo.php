@@ -27,4 +27,9 @@ class Modulo extends Model
      * @var string
      */
     protected $primaryKey = 'mod_id';
+
+    public function modulosHijos()
+    {
+        return $this->hasMany(Modulo::class, 'mod_padre_id', 'mod_id');
+    }
 }
