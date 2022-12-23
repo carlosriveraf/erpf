@@ -32,4 +32,20 @@ class Modulo extends Model
     {
         return $this->hasMany(Modulo::class, 'mod_padre_id', 'mod_id');
     }
+
+    public static function getModulos()
+    {
+        //listacampos
+
+        //listaoperadores
+
+        //hacer el select
+
+        //filtrar
+
+        //contar
+
+        //retornar cantidad y filas
+        return 2;
+    }
 }

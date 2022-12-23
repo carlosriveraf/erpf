@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ModuloController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('dashboard');
 });
 
 Route::middleware([
@@ -27,6 +28,4 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('/sistema/modulos', function () {
-    return 2;
-});
+Route::get('/sistema/modulos', [ModuloController::class, 'index'])->name('sistema.modulos');
