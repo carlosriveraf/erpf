@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Modulo extends Model
 {
@@ -33,19 +34,51 @@ class Modulo extends Model
         return $this->hasMany(Modulo::class, 'mod_padre_id', 'mod_id');
     }
 
-    public static function getModulos()
+    public static function getModulos($params = '')
     {
-        //listacampos
+        $listaCampos = [
+            'nombre' => 'MO.mod_nombre',
+            'url' => 'MO.mod_url',
+            'descripcion' => 'MO.mod_descripcion',
+            'codigo' => 'MO.mod_codigo',
+            'estado' => 'MO.mod_estado',
+            'fecha_registro' => 'MO.created_at',
+            'fecha_modificado' => 'MO.updated_at',
+        ];
 
-        //listaoperadores
+        $select = [];
+        foreach ($listaCampos as $alias => $column) {
+            $select[] = $column . ' AS ' . $alias;
+        }
 
-        //hacer el select
+        /* $result = Modulo::where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
+            ->where('mod_eliminado', '=', Define::NO_ELIMINADO)
+            ->select('mod_codigo as codigo', 'mod_nombre as nombre', 'mod_estado as estado', 'mod_url as url')
+            ->get(); */
 
-        //filtrar
+        $sql = DB::table(self::TABLE . ' AS MO')
+            ->select($select)
+            ->where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
+            ->where('mod_eliminado', '=', Define::NO_ELIMINADO);
 
-        //contar
+        $orderColumn = 'mod_id';
+        $orderSort = 'desc';
 
-        //retornar cantidad y filas
-        return 2;
+        echo '<pre>';
+        var_dump($params);
+        echo '</pre>';
+
+        if ($params != '' && is_array($params)) {
+            //filter
+            //sort
+        } else {
+            $sql = $sql->orderBy($orderColumn, $orderSort);
+        }
+
+        $total = count($sql->get());
+
+        $sql = $sql->skip($params['skip'])->take($params['take']);
+
+        return ['result' => $sql->get(), 'total' => $total];
     }
 }

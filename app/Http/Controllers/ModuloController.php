@@ -17,28 +17,30 @@ class ModuloController extends Controller
     {
         $callback = $request->input('callback');
 
-        //var_dump($request->all());
-
+        /* echo '<pre>';
+        var_dump($request->post('params'));
+        echo '</pre>'; */
+        //return;
         $params = '';
-        /* if ($_POST['params'] != '') {
-            $_SESSION['mod_documentos']['listado_documentos_financieros']['filters'] = $_POST['params'];
-            $params = json_decode($_POST['params']);
-        } */
+        if ($request->post('params') != '') {
+            //$_SESSION['mod_documentos']['listado_documentos_financieros']['filters'] = $_POST['params'];
+            $params = (array) json_decode($request->post('params'))[0];
+        }
+        /* echo '<pre>';
+        var_dump($params);
+        echo '</pre>';
+        return; */
 
-        $rsModulos = Modulo::getModulos();
+        $rsModulos = Modulo::getModulos($params);
 
-        $rsModulos = Modulo::where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
+        /* $rsModulos = Modulo::where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
             ->where('mod_eliminado', '=', Define::NO_ELIMINADO)
             ->select('mod_codigo as codigo', 'mod_nombre as nombre', 'mod_estado as estado', 'mod_url as url')
-            ->get();
+            ->get(); */
 
 
-        $response = array('data' => $rsModulos, 'count' => 2);
+        $response = array('data' => $rsModulos['result'], 'count' => $rsModulos['total']);
 
-        echo $callback . '(' . json_encode($response) . ')';
-        return;
-
-
-        return $rsModulos;
+        return $callback . '(' . json_encode($response) . ')';
     }
 }

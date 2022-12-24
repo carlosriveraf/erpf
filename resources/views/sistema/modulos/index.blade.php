@@ -28,30 +28,61 @@
                 dataType: 'jsonp',
                 type: 'post',
             },
-            /* parameterMap: function(options) {
-                var object = {};
+            parameterMap: function(options) {
+                let object = {};
                 object.params = JSON.stringify($.makeArray(options));
                 _parameterMap = object;
                 return object;
-            }, */
+            },
         },
-        pageSize: 100,
         serverPaging: true,
-        serverFiltering: true,
+        pageSize: 1,
+        page: 1,
         serverSorting: true,
+        //sort: {},
+        serverFiltering: true,
+        //filter: {},
         schema: {
             data: 'data',
             total: 'count',
+            model: {
+                id: 'mod_id',
+                fields: {
+                    codigo: {
+                        type: 'string',
+                        editable: false,
+                    },
+                },
+            },
         },
-        page: 1,
-        sort: '',
-        filter: '',
     });
 
     let grid = $('#gridListadoModulos').kendoGrid({
         dataSource: mainDataSourceListadoModulos,
         width: 'auto',
         height: 400,
+        filterable: {
+            messages: {
+                info: "Filtrar Lista:", // sets the text on top of the Filter menu
+                filter: "Filtrar", // sets the text for the "Filter" button
+                clear: "Limpiar", // sets the text for the "Clear" button
+                // when filtering boolean numbers
+                isTrue: "custom is true", // sets the text for "isTrue" radio button
+                isFalse: "custom is false", // sets the text for "isFalse" radio button
+                //changes the text of the "And" and "Or" of the Filter menu
+                and: "Y",
+                or: "O"
+            },
+            operators: {
+                string: {
+                    eq: "Igual a",
+                    neq: "No es igual a",
+                    startswith: "Empieza con",
+                    contains: "Contiene",
+                    endswith: "Termina con"
+                },
+            }
+        },
         pageable: {
             refresh: true,
             buttonCount: 5,
@@ -62,6 +93,8 @@
         columns: [{
             field: 'codigo',
             title: 'Codigo',
+            filterable: true,
+            sortable: true,
         }, {
             field: 'nombre',
             title: 'Nombre',
