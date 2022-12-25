@@ -106,9 +106,9 @@ class Modulo extends Model
         $orderColumn = 'mod_id';
         $orderSort = 'desc';
 
-        /* echo '<pre>';
+        echo '<pre>';
         var_dump($params);
-        echo '</pre>'; */
+        echo '</pre>';
 
         if ($params != '' && is_object($params)) {
             //filter
@@ -123,37 +123,31 @@ class Modulo extends Model
                         //if (count($filter->filters) == 2) {
                         if (isset($filter->filters)) {
                             foreach ($filter->filters as $iKey => $iFilter) {
+                                if (in_array($iFilter->field, $fechas)) {
+                                    if ($filter->value != '') {
+                                        $value = (new DateTime($iFilter->value))->format('Y-m-d');
+                                    } else {
+                                        $value = '';
+                                    }
+                                } else {
+                                }
                             }
                         } else {
-
                             if (in_array($filter->field, $fechas)) {
                                 if ($filter->value != '') {
                                     $value = (new DateTime($filter->value))->format('Y-m-d');
                                 } else {
                                     $value = '';
                                 }
-                            }
-
-                            var_dump($value);
-
-                            //var_dump($filter->field);
-                            /* var_dump($listaOperadores[$filter->operator]);
-                            var_dump($listaOperadores[$filter->operator]['val']); */
-                            if ($listaOperadores[$filter->operator]['val'] === null) {
-                                $value = null;
+                                $sql = $sql->whereDate($listaCampos[$filter->field], $listaOperadores[$filter->operator]['expr'], $value);
                             } else {
-                                /* var_dump($listaOperadores[$filter->operator]);
-                                var_dump($filter->value); */
-                                $value = sprintf($listaOperadores[$filter->operator]['val'], $filter->value);
+                                if ($listaOperadores[$filter->operator]['val'] === null) {
+                                    $value = null;
+                                } else {
+                                    $value = sprintf($listaOperadores[$filter->operator]['val'], $filter->value);
+                                }
+                                $sql = $sql->where($listaCampos[$filter->field], $listaOperadores[$filter->operator]['expr'], $value);
                             }
-
-                            /* var_dump($listaCampos[$filter->field]);
-                            var_dump($listaOperadores[$filter->operator]['expr']);
-                            var_dump($value);
-                            return; */
-
-                            $sql = $sql->where($listaCampos[$filter->field], $listaOperadores[$filter->operator]['expr'], $value);
-                            //var_dump($filter);
                         }
                     }
                 } else {
@@ -279,6 +273,8 @@ class Modulo extends Model
         } else {
             $sql = $sql->orderBy($orderColumn, $orderSort);
         }
+
+        //var_dump($sql->toSql());
 
         $total = count($sql->get());
 
