@@ -52,6 +52,14 @@
                         type: 'string',
                         editable: false,
                     },
+                    fecha_registro: {
+                        type: 'date',
+                        editable: false,
+                    },
+                    fecha_modificado: {
+                        type: 'date',
+                        editable: false,
+                    },
                 },
             },
         },
@@ -75,11 +83,25 @@
             },
             operators: {
                 string: {
-                    eq: "Igual a",
+                    /* eq: "Igual a",
                     neq: "No es igual a",
                     startswith: "Empieza con",
                     contains: "Contiene",
-                    endswith: "Termina con"
+                    endswith: "Termina con", */
+                    eq: 'Igual',
+                    neq: 'No es igual a',
+                    isnull: 'Es nulo',
+                    isnotnull: 'No es nulo',
+                    lt: 'menor que',
+                    lte: 'menor e igual que',
+                    gt: 'mayor que',
+                    gte: 'mayor e igual que',
+                    startswith: 'inicia con',
+                    endswith: 'termina con',
+                    contains: 'contiene',
+                    doesnotcontain: 'no contiene',
+                    isempty: 'es vacío',
+                    isnotempty: 'no es vacío',
                 },
             }
         },
@@ -101,6 +123,12 @@
         }, {
             field: 'url',
             title: 'URL',
+        }, {
+            field: 'fecha_registro',
+            title: 'Registro',
+        }, {
+            field: 'fecha_modificado',
+            title: 'Modificado',
         }, ],
     }).data('kendogrid');
     /* let myDataArray = [{

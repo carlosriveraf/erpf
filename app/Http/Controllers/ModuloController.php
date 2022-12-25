@@ -24,7 +24,7 @@ class ModuloController extends Controller
         $params = '';
         if ($request->post('params') != '') {
             //$_SESSION['mod_documentos']['listado_documentos_financieros']['filters'] = $_POST['params'];
-            $params = (array) json_decode($request->post('params'))[0];
+            $params = json_decode($request->post('params'))[0];
         }
         /* echo '<pre>';
         var_dump($params);
