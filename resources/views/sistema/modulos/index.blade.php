@@ -36,7 +36,7 @@
             },
         },
         serverPaging: true,
-        pageSize: 1,
+        pageSize: 20,
         page: 1,
         serverSorting: true,
         //sort: {},

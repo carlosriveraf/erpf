@@ -121,18 +121,57 @@ class Modulo extends Model
                         var_dump(isset($filter->filters));
                         var_dump($filter->filters); */
                         //if (count($filter->filters) == 2) {
-                        if (isset($filter->filters)) {
-                            foreach ($filter->filters as $iKey => $iFilter) {
+                        if (isset($filter->filters) /* && count($filter->filters) == 2 */) {
+                            $sql = $sql->where(function ($query) use ($filter, $fechas, $listaCampos, $listaOperadores) {
+                                $counter = 1;
+                                foreach ($filter->filters as $iKey => $iFilter) {
+                                    if ($counter == 1) {
+                                        $logic = 'and';
+                                    } else {
+                                        $logic = $filter->logic;
+                                    }
+
+                                    if (in_array($iFilter->field, $fechas)) {
+                                        if ($iFilter->value != '') {
+                                            $value = (new DateTime($iFilter->value))->format('Y-m-d');
+                                        } else {
+                                            $value = '';
+                                        }
+                                        $query = $query->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
+
+                                        //$sql1 = $sql1->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
+                                    } else {
+                                        if ($listaOperadores[$iFilter->operator]['val'] === null) {
+                                            $value = null;
+                                        } else {
+                                            $value = sprintf($listaOperadores[$iFilter->operator]['val'], $iFilter->value);
+                                        }
+                                        $query = $query->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
+                                        //$sql = $sql->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
+                                    }
+                                    $counter++;
+                                }
+                            });
+
+
+                            /* foreach ($filter->filters as $iKey => $iFilter) {
                                 if (in_array($iFilter->field, $fechas)) {
-                                    if ($filter->value != '') {
+                                    if ($iFilter->value != '') {
                                         $value = (new DateTime($iFilter->value))->format('Y-m-d');
                                     } else {
                                         $value = '';
                                     }
+                                    $sql1 = $sql1->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
                                 } else {
+                                    if ($listaOperadores[$iFilter->operator]['val'] === null) {
+                                        $value = null;
+                                    } else {
+                                        $value = sprintf($listaOperadores[$iFilter->operator]['val'], $iFilter->value);
+                                    }
+                                    $sql = $sql->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
                                 }
-                            }
-                        } else {
+                            } */
+                        } else { //terminado
                             if (in_array($filter->field, $fechas)) {
                                 if ($filter->value != '') {
                                     $value = (new DateTime($filter->value))->format('Y-m-d');
@@ -274,7 +313,7 @@ class Modulo extends Model
             $sql = $sql->orderBy($orderColumn, $orderSort);
         }
 
-        //var_dump($sql->toSql());
+        var_dump($sql->toSql());
 
         $total = count($sql->get());
 
