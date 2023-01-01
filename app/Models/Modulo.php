@@ -38,13 +38,17 @@ class Modulo extends Model
     public static function getModulos(string|Object $params = '')
     {
         $listaCampos = [
+            'codigo' => 'MO.mod_codigo',
             'nombre' => 'MO.mod_nombre',
             'url' => 'MO.mod_url',
             'descripcion' => 'MO.mod_descripcion',
-            'codigo' => 'MO.mod_codigo',
             'estado' => 'MO.mod_estado',
+            'ip_registro' => 'MO.mod_ip_registro',
+            'ip_modificado' => 'MO.mod_ip_modificado',
             'fecha_registro' => 'MO.created_at',
             'fecha_modificado' => 'MO.updated_at',
+            'usuario_registro' => DB::raw("CONCAT(USR.usu_nombres,' ',USR.usu_apellido_paterno,' ',USR.usu_apellido_materno)"),
+            'usuario_modificado' => DB::raw("CONCAT(USM.usu_nombres,' ',USM.usu_apellido_paterno,' ',USM.usu_apellido_materno)"),
         ];
 
         $fechas = [
@@ -52,76 +56,56 @@ class Modulo extends Model
             'fecha_modificado',
         ];
 
-        /* $listaOperadores = [
-            'eq' => '=',
-            'neq' => '!=',
-            'isnull' => '=',
-            'isnotnull' => '!=',
-            'lt' => '<',
-            'lte' => '<=',
-            'gt' => '>',
-            'gte' => '>=',
-            'startswith' => ['expr' => '%s LIKE :%s', 'val' => '%s%%'],
-            'doesnotstartwith' => ['expr' => '%s LIKE :%s', 'val' => '%s%%'],
-            'endswith' => ['expr' => '%s LIKE :%s', 'val' => '%%%s'],
-            'doesnotendwith' => ['expr' => '%s LIKE :%s', 'val' => '%%%s'],
-            'contains' => ['expr' => '%s LIKE :%s', 'val' => '%%%s%%'],
-            'doesnotcontain' => ['expr' => '%s NOT LIKE :%s', 'val' => '%%%s%%'],
-            'isempty' => '=',
-            'isnotempty' => '!=',
-        ]; */
-
         $listaOperadores = [
-            'eq'                => ['expr' => '=', 'val' => '%s'],
-            'neq'               => ['expr' => '!=', 'val' => '%s'],
-            'isnull'            => ['expr' => '=', 'val' => null],
-            'isnotnull'         => ['expr' => '!=', 'val' => null],
-            'lt'                => ['expr' => '<', 'val' => '%s'],
-            'lte'               => ['expr' => '<=', 'val' => '%s'],
-            'gt'                => ['expr' => '>', 'val' => '%s'],
-            'gte'               => ['expr' => '>=', 'val' => '%s'],
-            'startswith'        => ['expr' => 'like', 'val' => '%s%%'],
-            'endswith'          => ['expr' => 'like', 'val' => '%%%s'],
-            'contains'          => ['expr' => 'like', 'val' => '%%%s%%'],
-            'doesnotcontain'    => ['expr' => 'not like', 'val' => '%%%s%%'],
-            'isempty'           => ['expr' => '=', 'val' => ''],
-            'isnotempty'        => ['expr' => '!=', 'val' => '']
+            'eq' => ['expr' => '=', 'val' => '%s'],
+            'neq' => ['expr' => '!=', 'val' => '%s'],
+            'isnull' => ['expr' => '=', 'val' => null],
+            'isnotnull' => ['expr' => '!=', 'val' => null],
+            'lt' => ['expr' => '<', 'val' => '%s'],
+            'lte' => ['expr' => '<=', 'val' => '%s'],
+            'gt' => ['expr' => '>', 'val' => '%s'],
+            'gte' => ['expr' => '>=', 'val' => '%s'],
+            'startswith' => ['expr' => 'like', 'val' => '%s%%'],
+            'endswith' => ['expr' => 'like', 'val' => '%%%s'],
+            'contains' => ['expr' => 'like', 'val' => '%%%s%%'],
+            'doesnotcontain' => ['expr' => 'not like', 'val' => '%%%s%%'],
+            'isempty' => ['expr' => '=', 'val' => ''],
+            'isnotempty' => ['expr' => '!=', 'val' => '']
         ];
 
-        $select = [];
-        foreach ($listaCampos as $alias => $column) {
-            $select[] = $column . ' AS ' . $alias;
-        }
-
-        /* $result = Modulo::where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
-            ->where('mod_eliminado', '=', Define::NO_ELIMINADO)
-            ->select('mod_codigo as codigo', 'mod_nombre as nombre', 'mod_estado as estado', 'mod_url as url')
-            ->get(); */
-
-        $sql = DB::table(self::TABLE . ' AS MO')
-            ->select($select)
+        $sql = DB::table(self::TABLE, 'MO')
+            ->select(
+                'MO.mod_codigo',
+                'MO.mod_nombre',
+                'MO.mod_url',
+                'MO.mod_descripcion',
+                'MO.mod_estado',
+                'MO.mod_ip_registro',
+                'MO.mod_ip_modificado',
+                'MO.created_at',
+                'MO.updated_at',
+                DB::raw("CONCAT(USR.usu_nombres,' ',USR.usu_apellido_paterno,' ',USR.usu_apellido_materno) AS usuario_registro"),
+                DB::raw("CONCAT(USM.usu_nombres,' ',USM.usu_apellido_paterno,' ',USM.usu_apellido_materno) AS usuario_modificado")
+            )
+            ->join(User::TABLE . ' AS USR', 'MO.mod_usu_id_registro', '=', 'USR.usu_id')
+            ->join(User::TABLE . ' AS USM', 'MO.mod_usu_id_modificado', '=', 'USM.usu_id')
             ->where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
             ->where('mod_eliminado', '=', Define::NO_ELIMINADO);
 
         $orderColumn = 'mod_id';
         $orderSort = 'desc';
 
-        echo '<pre>';
-        var_dump($params);
-        echo '</pre>';
-
         if ($params != '' && is_object($params)) {
-            //filter
-            //sort
             if (isset($params->filter) && is_object($params->filter)) {
+                if ($params->filter->logic == 'or') {
+                    $tmp = clone $params->filter;
+                    $params->filter->logic = 'and';
+                    unset($params->filter->filters);
+                    $params->filter->filters[] = $tmp;
+                }
                 if (count($params->filter->filters) <= 2) {
                     foreach ($params->filter->filters as $key => $filter) {
-                        /* var_dump('filter');
-                        var_dump($filter);
-                        var_dump(isset($filter->filters));
-                        var_dump($filter->filters); */
-                        //if (count($filter->filters) == 2) {
-                        if (isset($filter->filters) /* && count($filter->filters) == 2 */) {
+                        if (isset($filter->filters)) {
                             $sql = $sql->where(function ($query) use ($filter, $fechas, $listaCampos, $listaOperadores) {
                                 $counter = 1;
                                 foreach ($filter->filters as $iKey => $iFilter) {
@@ -130,7 +114,6 @@ class Modulo extends Model
                                     } else {
                                         $logic = $filter->logic;
                                     }
-
                                     if (in_array($iFilter->field, $fechas)) {
                                         if ($iFilter->value != '') {
                                             $value = (new DateTime($iFilter->value))->format('Y-m-d');
@@ -138,8 +121,6 @@ class Modulo extends Model
                                             $value = '';
                                         }
                                         $query = $query->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
-
-                                        //$sql1 = $sql1->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
                                     } else {
                                         if ($listaOperadores[$iFilter->operator]['val'] === null) {
                                             $value = null;
@@ -147,31 +128,11 @@ class Modulo extends Model
                                             $value = sprintf($listaOperadores[$iFilter->operator]['val'], $iFilter->value);
                                         }
                                         $query = $query->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
-                                        //$sql = $sql->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
                                     }
                                     $counter++;
                                 }
                             });
-
-
-                            /* foreach ($filter->filters as $iKey => $iFilter) {
-                                if (in_array($iFilter->field, $fechas)) {
-                                    if ($iFilter->value != '') {
-                                        $value = (new DateTime($iFilter->value))->format('Y-m-d');
-                                    } else {
-                                        $value = '';
-                                    }
-                                    $sql1 = $sql1->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
-                                } else {
-                                    if ($listaOperadores[$iFilter->operator]['val'] === null) {
-                                        $value = null;
-                                    } else {
-                                        $value = sprintf($listaOperadores[$iFilter->operator]['val'], $iFilter->value);
-                                    }
-                                    $sql = $sql->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value);
-                                }
-                            } */
-                        } else { //terminado
+                        } else {
                             if (in_array($filter->field, $fechas)) {
                                 if ($filter->value != '') {
                                     $value = (new DateTime($filter->value))->format('Y-m-d');
@@ -190,130 +151,65 @@ class Modulo extends Model
                         }
                     }
                 } else {
+                    foreach ($params->filter->filters as $key => $filter) {
+                        if (isset($filter->filters)) {
+                            $sql = $sql->where(function ($query) use ($filter, $fechas, $listaCampos, $listaOperadores) {
+                                $counter = 1;
+                                foreach ($filter->filters as $iKey => $iFilter) {
+                                    if ($counter == 1) {
+                                        $logic = 'and';
+                                    } else {
+                                        $logic = $filter->logic;
+                                    }
+                                    if (in_array($iFilter->field, $fechas)) {
+                                        if ($iFilter->value != '') {
+                                            $value = (new DateTime($iFilter->value))->format('Y-m-d');
+                                        } else {
+                                            $value = '';
+                                        }
+                                        $query = $query->whereDate($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
+                                    } else {
+                                        if ($listaOperadores[$iFilter->operator]['val'] === null) {
+                                            $value = null;
+                                        } else {
+                                            $value = sprintf($listaOperadores[$iFilter->operator]['val'], $iFilter->value);
+                                        }
+                                        $query = $query->where($listaCampos[$iFilter->field], $listaOperadores[$iFilter->operator]['expr'], $value, $logic);
+                                    }
+                                    $counter++;
+                                }
+                            });
+                        } else {
+                            if (in_array($filter->field, $fechas)) {
+                                if ($filter->value != '') {
+                                    $value = (new DateTime($filter->value))->format('Y-m-d');
+                                } else {
+                                    $value = '';
+                                }
+                                $sql = $sql->whereDate($listaCampos[$filter->field], $listaOperadores[$filter->operator]['expr'], $value);
+                            } else {
+                                if ($listaOperadores[$filter->operator]['val'] === null) {
+                                    $value = null;
+                                } else {
+                                    $value = sprintf($listaOperadores[$filter->operator]['val'], $filter->value);
+                                }
+                                $sql = $sql->where($listaCampos[$filter->field], $listaOperadores[$filter->operator]['expr'], $value);
+                            }
+                        }
+                    }
                 }
             }
 
-            /* if (is_object($params[0]->filter)) {
-                if (count($params[0]->filter->filters) <= 2) {
-                    $where = [];
-                    $valWhere = [];
-
-                    foreach ($params[0]->filter->filters as $key => $filter) {
-                        if (count($filter->filters) == 2) {
-                            $iWhere = [];
-                            $iValWhere = [];
-
-                            foreach ($filter->filters as $iKey => $iFilter) {
-                                if ($iFilter->field == 'f_registro') // Excepción para campo del tipo fecha
-                                {
-                                    if ($iFilter->value != '') {
-                                        $fechaFiltro = new DateTime($iFilter->value);
-                                        $iValFilter = $fechaFiltro->format('Y-m-d');
-                                    } else {
-                                        $iValFilter = $iFilter->value;
-                                    }
-                                } else {
-                                    $iValFilter = $iFilter->value;
-                                }
-
-                                $iWhere[] = sprintf($listaOperadores[$iFilter->operator]['expr'], $listaCampos[$iFilter->field], $iFilter->field . $iKey);
-                                $iValWhere[$iFilter->field . $iKey] = sprintf($listaOperadores[$iFilter->operator]['val'], $iValFilter);
-                            }
-
-                            $iExpWhere = implode(' ' . $filter->logic . ' ', $iWhere);
-
-                            $sql->where($iExpWhere, $iValWhere, TRUE);
-                        } else {
-                            if ($filter->field == 'f_registro') // Excepción para campo del tipo fecha
-                            {
-                                if ($filter->value != '') {
-                                    $fechaFiltro = new DateTime($filter->value);
-                                    $valFilter = $fechaFiltro->format('Y-m-d');
-                                } else {
-                                    $valFilter = $filter->value;
-                                }
-                            } else {
-                                $valFilter = $filter->value;
-                            }
-
-                            $where[] = sprintf($listaOperadores[$filter->operator]['expr'], $listaCampos[$filter->field], $filter->field . $key);
-                            $valWhere[$filter->field . $key] = sprintf($listaOperadores[$filter->operator]['val'], $valFilter);
-                        }
-                    }
-
-                    $expWhere = implode(' ' . $params[0]->filter->logic . ' ', $where);
-                    $sql->where($expWhere, $valWhere, TRUE);
-                } else {
-                    $where = [];
-                    $valWhere = [];
-
-                    foreach ($params[0]->filter->filters as $key => $filter) {
-                        if (count($filter->filters) == 2) {
-                            $iWhere = [];
-                            $iValWhere = [];
-
-                            foreach ($filter->filters as $iKey => $iFilter) {
-                                if ($iFilter->field == 'f_registro') // Excepción para campo del tipo fecha
-                                {
-                                    if ($iFilter->value != '') {
-                                        $fechaFiltro = new DateTime($iFilter->value);
-                                        $iValFilter = $fechaFiltro->format('Y-m-d');
-                                    } else {
-                                        $iValFilter = $iFilter->value;
-                                    }
-                                } else {
-                                    $iValFilter = $iFilter->value;
-                                }
-
-                                $iWhere[] = sprintf($listaOperadores[$iFilter->operator]['expr'], $listaCampos[$iFilter->field], $iFilter->field . $iKey);
-                                $iValWhere[$iFilter->field . $iKey] = sprintf($listaOperadores[$iFilter->operator]['val'], $iValFilter);
-                            }
-                            $iExpWhere = implode(' ' . $filter->logic . ' ', $iWhere);
-                            $sql->where($iExpWhere, $iValWhere, TRUE);
-                        } else {
-                            if ($filter->field == 'f_registro') // Excepción para campo del tipo fecha
-                            {
-                                if ($filter->value != '') {
-                                    $fechaFiltro = new DateTime($filter->value);
-                                    $valFilter = $fechaFiltro->format('Y-m-d');
-                                } else {
-                                    $valFilter = $filter->value;
-                                }
-                            } else {
-                                $valFilter = $filter->value;
-                            }
-
-                            $where[] = sprintf($listaOperadores[$filter->operator]['expr'], $listaCampos[$filter->field], $filter->field . $key);
-                            $valWhere[$filter->field . $key] = sprintf($listaOperadores[$filter->operator]['val'], $valFilter);
-                        }
-                    }
-
-                    $expWhere = implode(' ' . $params[0]->filter->logic . ' ', $where);
-
-                    $sql->where($expWhere, $valWhere, TRUE);
-                }
-            }
-
-            if (is_array($params[0]->sort)) {
-                $orders = [];
-
-                foreach ($params[0]->sort as $sort) {
-                    $orders[] = $listaCampos[$sort->field] . ' ' . $sort->dir;
-                }
-
-                if (count($orders) > 0) {
-                    $sql->order(implode(', ', $orders));
-                } else {
-                    $sql->order($order);
+            if (isset($params->sort) && is_array($params->sort)) {
+                foreach ($params->sort as $key => $sort) {
+                    $sql = $sql->orderBy($listaCampos[$sort->field], $sort->dir);
                 }
             } else {
-                $sql->order($order);
-            } */
+                $sql = $sql->orderBy($orderColumn, $orderSort);
+            }
         } else {
             $sql = $sql->orderBy($orderColumn, $orderSort);
         }
-
-        var_dump($sql->toSql());
 
         $total = count($sql->get());
 

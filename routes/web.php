@@ -26,6 +26,15 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-});
 
-Route::get('/sistema/modulos', [ModuloController::class, 'index'])->name('sistema.modulos');
+    Route::get('/sandbox', function () {
+        echo '<pre>';
+        var_dump(session()->all());
+        echo '</pre>';
+    });
+
+    Route::get('/sistema/modulos', [ModuloController::class, 'index'])->name('sistema.modulos');
+    Route::post('/sistema/modulos/listado-modulos', [ModuloController::class, 'listadoModulos'])->name('sistema.modulos.listado_modulos');
+    Route::post('/sistema/modulos/listado-modulos/json-estados', [ModuloController::class, 'jsonEstados'])->name('sistema.modulos.listado_modulos.json_estados');
+    //Route::get('/sistema/modulos/crear', [ModuloController::class, 'create'])->name('sistema.modulos.create');
+});

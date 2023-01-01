@@ -1,4 +1,5 @@
-<div id="dashboard_header" class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/75 backdrop-blur border-b border-slate-900/10 dark:border-slate-50/[0.06]">
+<div id="dashboard_header" class="sticky top-0 z-40 bg-[#2f8bc7] backdrop-blur">
+    <!-- <div id="dashboard_header" class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/75 backdrop-blur border-b border-slate-900/10 dark:border-slate-50/[0.06]"> -->
     <div class="mx-auto">
         <div class="py-4 lg:px-8 lg:border-0 mx-4 lg:mx-0">
             <div class="relative flex items-center">
@@ -8,7 +9,39 @@
                         <path d="M5 6h14M5 12h14M5 18h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
                     </svg>
                 </button>
-                <h1 class="w-full text-center">Sistema ERP</h1>
+                <h1 id="dashboard_header_main_text" class="w-full text-center text-white font-semibold text-lg"></h1>
+                <script>
+                    function currentTime(currentdate) {
+                        let date = new Date(currentdate);
+
+                        let day = date.getDate();
+                        let month = date.getMonth() + 1;
+                        let year = date.getFullYear();
+                        let hh = date.getHours();
+                        let mm = date.getMinutes();
+                        let ss = date.getSeconds();
+
+                        day = (day < 10) ? '0' + day : day;
+                        month = (month < 10) ? '0' + month : month;
+                        hh = (hh < 10) ? '0' + hh : hh;
+                        mm = (mm < 10) ? '0' + mm : mm;
+                        ss = (ss < 10) ? '0' + ss : ss;
+
+                        let time = 'Sistema ERP (' + day + '/' + month + '/' + year + ' ' + hh + ':' + mm + ':' + ss + ')';
+                        document.getElementById('dashboard_header_main_text').innerText = time;
+
+                        date.setSeconds(date.getSeconds() + 1);
+                        setTimeout(function() {
+                            currentTime(date)
+                        }, 1000);
+                    }
+
+                    let dateserver = '<?php
+                                        $mytime = Carbon\Carbon::now();
+                                        echo $mytime;
+                                        ?>';
+                    currentTime(dateserver);
+                </script>
                 <div x-data="{open:false}" class="-my-1 ml-auto">
                     <button @click="open=true" type="button" class="text-slate-500 w-8 h-8 flex items-center justify-center hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300">
                         <span class="sr-only">Navigation</span>

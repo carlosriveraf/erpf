@@ -19,4 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/listado-modulos', [ModuloController::class, 'listadoModulos']);
+/* Route::post('/listado-modulos', [ModuloController::class, 'listadoModulos']); */
+
+
+/* Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/listado-modulos', [ModuloController::class, 'listadoModulos']);
+}); */
