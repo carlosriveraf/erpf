@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,23 @@ class Modulo extends Model
      * @var string
      */
     protected $primaryKey = 'mod_id';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'mod_nombre',
+        'mod_url',
+        'mod_descripcion',
+        'mod_codigo',
+        'mod_padre_id',
+        'mod_usu_id_registro',
+        'mod_usu_id_modificado',
+        'mod_ip_registro',
+        'mod_ip_modificado',
+    ];
 
     public function modulosHijos()
     {
@@ -89,7 +107,6 @@ class Modulo extends Model
             )
             ->join(User::TABLE . ' AS USR', 'MO.mod_usu_id_registro', '=', 'USR.usu_id')
             ->join(User::TABLE . ' AS USM', 'MO.mod_usu_id_modificado', '=', 'USM.usu_id')
-            ->where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
             ->where('mod_eliminado', '=', Define::NO_ELIMINADO);
 
         $orderColumn = 'mod_id';
@@ -216,5 +233,63 @@ class Modulo extends Model
         $sql = $sql->skip($params->skip)->take($params->take);
 
         return ['result' => $sql->get(), 'total' => $total];
+    }
+
+    public static function getModulosPadre()
+    {
+        return DB::table(self::TABLE)
+            ->select('mod_id AS id', 'mod_nombre AS descripcion', 'mod_codigo AS codigo')
+            ->where('mod_estado', '=', self::ESTADO_ACTIVO)
+            ->where('mod_eliminado', '=', Define::NO_ELIMINADO)
+            ->whereNull('mod_padre_id')
+            ->orderBy('mod_nombre', 'asc')
+            ->get();
+    }
+
+    public static function existsModuloByCodigo($codigo): bool
+    {
+        return DB::table(self::TABLE)
+            ->where('mod_codigo', '=', $codigo)
+            ->exists();
+    }
+
+    public static function esActivoModuloByCodigo($codigo): bool
+    {
+        return DB::table(self::TABLE)
+            ->where('mod_codigo', '=', $codigo)
+            ->where('mod_estado', '=', Modulo::ESTADO_ACTIVO)
+            ->exists();
+    }
+
+    public static function esEliminadoModuloByCodigo($codigo): bool
+    {
+        return DB::table(self::TABLE)
+            ->where('mod_codigo', '=', $codigo)
+            ->where('mod_eliminado', '=', Define::ELIMINADO)
+            ->exists();
+    }
+
+    public static function getLastIdModulo(): int
+    {
+        return (DB::table(Modulo::TABLE)
+            ->select('mod_id')
+            ->orderBy('mod_id', 'desc')
+            ->first())->mod_id;
+    }
+
+    public static function crearModulo(array $data): int
+    {
+        DB::beginTransaction();
+        try {
+            DB::table(self::TABLE)->insert([$data]);
+            $id = DB::getPdo()->lastInsertId();
+
+            DB::commit();
+
+            return $id;
+        } catch (Exception $e) {
+            DB::rollback();
+            return 0;
+        }
     }
 }

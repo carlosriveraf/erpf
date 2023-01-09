@@ -7,8 +7,6 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/kendoui/jquery.min.js',
-                'resources/js/kendoui/kendo.all.min.js',
             ],
             refresh: [
                 ...refreshPaths,

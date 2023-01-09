@@ -12,4 +12,7 @@ class Define extends Model
 
     const ELIMINADO = 1;
     const NO_ELIMINADO = 0;
+
+    const STATUS_ERROR = 0;
+    const STATUS_OK = 1;
 }

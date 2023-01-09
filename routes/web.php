@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\SandboxController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,14 +28,11 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/sandbox', function () {
-        echo '<pre>';
-        var_dump(session()->all());
-        echo '</pre>';
-    });
+    Route::get('/sandbox', [SandboxController::class, 'index']);
 
     Route::get('/sistema/modulos', [ModuloController::class, 'index'])->name('sistema.modulos');
     Route::post('/sistema/modulos/listado-modulos', [ModuloController::class, 'listadoModulos'])->name('sistema.modulos.listado_modulos');
     Route::post('/sistema/modulos/listado-modulos/json-estados', [ModuloController::class, 'jsonEstados'])->name('sistema.modulos.listado_modulos.json_estados');
+    Route::post('/sistema/modulos', [ModuloController::class, 'store'])->name('sistema.modulos.store');
     //Route::get('/sistema/modulos/crear', [ModuloController::class, 'create'])->name('sistema.modulos.create');
 });

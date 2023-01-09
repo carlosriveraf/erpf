@@ -15,3 +15,6 @@ instalació de jetstream + livewire
 npm install
 npm run build
 php artisan migrate
+
+
+php artisan vendor:publish --tag=livewire-ui-modal-views

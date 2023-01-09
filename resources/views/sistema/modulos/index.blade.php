@@ -16,7 +16,7 @@
     </button>
 </script>
 
-<div class="bg-white py-4 px-6">
+<div class="bg-white py-4 px-6 h-max">
     <div id="gridListadoModulos"></div>
 </div>
 
@@ -37,7 +37,7 @@
             },
         },
         serverPaging: true,
-        pageSize: 20,
+        pageSize: 50,
         serverSorting: true,
         serverFiltering: true,
         @if($params != '')
@@ -99,7 +99,7 @@
         toolbar: kendo.template($('#tplTools').html()),
         dataSource: mainDataSourceListadoModulos,
         width: 'auto',
-        height: 400,
+        height: 'full',
         sortable: {
             mode: 'multiple'
         },
@@ -174,10 +174,10 @@
             title: 'IP Modificado',
         }, {
             field: 'usuario_registro',
-            title: 'Usuario Registro',
+            title: 'Registrado por',
         }, {
             field: 'usuario_modificado',
-            title: 'Usuario Modificado',
+            title: 'Modificado por',
         }, {
             field: 'fecha_registro',
             title: 'Registro',
@@ -209,7 +209,62 @@
     }
 
     function nuevoModulo() {
-        {{--window.location.href = '{{route("sistema.modulos.create")}}';--}}
+        Livewire.emit('openModal', 'modal.sistema.modulos.crear-modulo-modal');
     }
+
+    function crearModulo() {
+        let nombre = getInputTextValue('CM_nombre');
+        let url = getInputTextValue('CM_url');
+        let descripcion = getTextAreaValue('CM_descripcion');
+        let esprincipal = isChecked('CM_esprincipal');
+
+        let padre_codigo = '';
+        if (!esprincipal) {
+            esprincipal = 0;
+            padre_codigo = getSelectNativeValue('CM_modulopadre').codigo;
+        } else {
+            esprincipal = 1;
+        }
+        if (padre_codigo == undefined) {
+            padre_codigo = '';
+        }
+
+        fetch('{{route("sistema.modulos.store")}}', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            },
+            body: new URLSearchParams({
+                _token: '{{csrf_token()}}',
+                CM_nombre: nombre,
+                CM_url: url,
+                CM_descripcion: descripcion,
+                CM_esprincipal: esprincipal,
+                CM_modulopadre: padre_codigo,
+            }),
+        }).then(response => response.json()).then(data => {
+            if (data.status == '{{\App\Models\Define::STATUS_ERROR}}') {
+                for (const [key, value] of Object.entries(data.error)) {
+                    setErrorValue(key, value);
+                }
+            } else if (data.status == '{{\App\Models\Define::STATUS_OK}}') {
+                alert(data.message);
+                Livewire.emit('closeModal', 'modal.sistema.modulos.crear-modulo-modal');
+                mainDataSourceListadoModulos.read();
+            }
+        });
+    }
+
+    /*
+        let header = document.getElementById('dashboard_header');
+
+        let heightWindow = window.innerHeight;
+        let heightHeader = header.offsetHeight + parseInt(getComputedStyle(header).getPropertyValue('margin-top')) + parseInt(getComputedStyle(header).getPropertyValue('margin-bottom'));
+
+        header.offsetHeight; //content + padding + border
+
+        parseInt(getComputedStyle(header).getPropertyValue('margin-top'));
+        parseInt(getComputedStyle(header).getPropertyValue('margin-bottom'));
+    */
 </script>
 @endsection

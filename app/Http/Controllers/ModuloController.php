@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Define;
 use App\Models\Modulo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class ModuloController extends Controller
 {
@@ -36,11 +36,6 @@ class ModuloController extends Controller
             'params' => $params,
         ]);
     }
-
-    /* public function create()
-    {
-        return view('sistema.modulos.create');
-    } */
 
     public function listadoModulos(Request $request)
     {
@@ -90,5 +85,65 @@ class ModuloController extends Controller
         $jsonEstado[] = ['id' => Modulo::ESTADO_ACTIVO, 'name' => Modulo::FORMATO_ESTADO_ACTIVO];
 
         return $jsonEstado;
+    }
+
+    public function store(Request $request)
+    {
+        $error = [];
+        if (null === $request->post('CM_nombre') || $request->post('CM_nombre') === '') {
+            $error['CM_nombre'] = '* Ingre el nombre';
+        }
+        if (null === $request->post('CM_url') || $request->post('CM_url') === '') {
+            $error['CM_url'] = '* Ingre la url';
+        }
+        if (null === $request->post('CM_esprincipal') || !in_array($request->post('CM_esprincipal'), [0, 1])) {
+            $error['CM_esprincipal'] = '* Indicar si es módulo principal o no.';
+        }
+        if ($request->post('CM_esprincipal') == 0) {
+            if (null === $request->post('CM_modulopadre')) {
+                $error['CM_modulopadre'] = '* Indicar el módulo padre.';
+            } else {
+                if (!Modulo::existsModuloByCodigo($request->post('CM_modulopadre'))) {
+                    $error['CM_modulopadre'] = '* Módulo no existe.';
+                }
+                if (!Modulo::esActivoModuloByCodigo($request->post('CM_modulopadre'))) {
+                    $error['CM_modulopadre'] = '* Módulo no activo.';
+                }
+                if (Modulo::esEliminadoModuloByCodigo($request->post('CM_modulopadre'))) {
+                    $error['CM_modulopadre'] = '* Módulo eliminado.';
+                }
+            }
+        }
+
+        if (count($error) > 0) {
+            return json_encode(['status' => Define::STATUS_ERROR, 'error' => $error]);
+        }
+
+        $mod_nombre = (string) $request->post('CM_nombre');
+        $mod_url = (string) $request->post('CM_url');
+        $mod_descripcion = (string) $request->post('CM_descripcion');
+        $mod_modulopadre = (string) $request->post('CM_modulopadre');
+
+        if ($request->post('CM_modulopadre') == '') {
+            $mod_modulopadre = null;
+        } else {
+            $mod_modulopadre = Modulo::firstWhere('mod_codigo', '=', $request->post('CM_modulopadre'))->mod_id;
+        }
+
+        Modulo::crearModulo([
+            'mod_nombre' => $mod_nombre,
+            'mod_url' => $mod_url,
+            'mod_descripcion' => $mod_descripcion,
+            'mod_codigo' => str_pad(Modulo::getLastIdModulo() + 1, 5, '0', STR_PAD_LEFT),
+            'mod_padre_id' => $mod_modulopadre,
+            'mod_usu_id_registro' => Auth::id(),
+            'mod_usu_id_modificado' => Auth::id(),
+            'mod_ip_registro' => $request->ip(),
+            'mod_ip_modificado' => $request->ip(),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return json_encode(['status' => Define::STATUS_OK, 'message' => 'Módulo creado con éxito']);
     }
 }

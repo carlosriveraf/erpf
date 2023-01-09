@@ -10,9 +10,8 @@
     @vite('resources/css/app.css')
     @livewireStyles
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
+    <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
 
-    </script>
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -23,14 +22,18 @@
 
     <link rel="stylesheet" href="{{asset('/kendoui/styles/kendo.default-v2.min.css')}}">
     <script src="{{asset('/kendoui/js/jquery.min.js')}}"></script>
-    <script src="{{asset('kendoui/js/kendo.all.min.js')}}"></script>
-    <script src="{{asset('kendoui/js/messages/kendo.messages.es-PE.min.js')}}"></script>
+    <script src="{{asset('/kendoui/js/kendo.all.min.js')}}"></script>
+    <script src="{{asset('/kendoui/js/messages/kendo.messages.es-PE.min.js')}}"></script>
 
     <script src="https://kit.fontawesome.com/4f91a515f0.js" crossorigin="anonymous"></script>
+
+    <script src="{{asset('/js/inputstyle.js')}}"></script>
+
+    @livewire('livewire-ui-modal')
     @yield('head')
 </head>
 
-<body x-data="dropdown" class="bg-black/20">
+<body x-data="dropdown" class="bg-[#dad8d8]">
     @include('layouts.header')
 
     <div class="overflow-hidden">
@@ -43,7 +46,7 @@
                 <main class="mx-auto relative z-20 pt-3 xl:max-w-none">
                     @yield('main_content')
                 </main>
-                @include('layouts.footer')
+                {{--@include('layouts.footer')--}}
             </div>
         </div>
     </div>
