@@ -6,16 +6,255 @@
 @section('title', 'Sandbox')
 
 @section('main_content')
-<input type="text" autofocus class="h-2 border-2 border-[#2F8BC7] ring-[#2F8BC7]">
+<div class="px-5 py-3">
+    <div class="mb-3 text-lg font-semibold">
+        Crear Módulo
+    </div>
+    <div class="mb-3">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-4">
+            <div>
+                <div class="w-full">
+                    <div class="h-8 relative">
+                        <input type="text" id="CM_nombre_input_text" class="
+            h-full w-full
+            px-2 py-1.5
+            text-sm
+            rounded
+            border border-[#00000052]
+            focus:border focus:border-[#00000052]
+            focus:ring-1 focus:ring-[#00000052]
+        ">
+                        <div id="CM_nombre_label" class="
+            bg-white
+            px-1.5
+            text-sm text-[#5f6368]
+            absolute top-1.5 left-1
+        ">Nombre</div>
+                    </div>
+                    <div>
+                        <span id="CM_nombre_error_message" class="
+            hidden
+            text-[#d50000] text-xs
+            pl-2
+        "></span>
+                    </div>
+                </div>
+
+
+
+                <script>
+                    document.getElementById('CM_nombre' + '_input_text').addEventListener('focus', (event) => {
+                        focusInputText('CM_nombre');
+                    });
+
+                    document.getElementById('CM_nombre' + '_input_text').addEventListener('blur', (event) => {
+                        blurInputText('CM_nombre');
+                    });
+
+                    document.getElementById('CM_nombre' + '_label').addEventListener('click', (event) => {
+                        document.getElementById('CM_nombre' + '_input_text').focus();
+                    });
+
+                    document.getElementById('CM_nombre' + '_input_text').addEventListener('input', (event) => {
+                        clearInputTextError('CM_nombre');
+                        focusInputText('CM_nombre');
+                    });
+                </script>
+            </div>
+            <div>
+                <div class="w-full">
+                    <div class="h-8 relative">
+                        <input type="text" id="CM_url_input_text" class="
+            h-full w-full
+            px-2 py-1.5
+            text-sm
+            rounded
+            border border-[#00000052]
+            focus:border focus:border-[#00000052]
+            focus:ring-1 focus:ring-[#00000052]
+        ">
+                        <div id="CM_url_label" class="
+            bg-white
+            px-1.5
+            text-sm text-[#5f6368]
+            absolute top-1.5 left-1
+        ">URL</div>
+                    </div>
+                    <div>
+                        <span id="CM_url_error_message" class="
+            hidden
+            text-[#d50000] text-xs
+            pl-2
+        "></span>
+                    </div>
+                </div>
+
+
+
+                <script>
+                    document.getElementById('CM_url' + '_input_text').addEventListener('focus', (event) => {
+                        focusInputText('CM_url');
+                    });
+
+                    document.getElementById('CM_url' + '_input_text').addEventListener('blur', (event) => {
+                        blurInputText('CM_url');
+                    });
+
+                    document.getElementById('CM_url' + '_label').addEventListener('click', (event) => {
+                        document.getElementById('CM_url' + '_input_text').focus();
+                    });
+
+                    document.getElementById('CM_url' + '_input_text').addEventListener('input', (event) => {
+                        clearInputTextError('CM_url');
+                        focusInputText('CM_url');
+                    });
+                </script>
+            </div>
+            <div class="col-span-2">
+                <div class="w-full">
+                    <div class="relative">
+                        <textarea rows="2" cols="20" id="CM_descripcion_textarea" class="
+            h-full w-full
+            px-2 py-1.5
+            text-sm
+            rounded
+            border border-[#00000052]
+            focus:border focus:border-[#00000052]
+            focus:ring-1 focus:ring-[#00000052]
+        "></textarea>
+                        <div id="CM_descripcion_label" class="
+            bg-white
+            px-1.5
+            text-sm text-[#5f6368]
+            absolute top-1.5 left-1
+        ">
+                            Descripción
+                        </div>
+                    </div>
+                    <div>
+                        <span id="CM_descripcion_error_message" class="
+            hidden
+            text-[#d50000] text-xs
+            pl-2
+        "></span>
+                    </div>
+                </div>
+
+                <script>
+                    document.getElementById('CM_descripcion' + '_textarea').addEventListener('focus', (event) => {
+                        focusTextArea('CM_descripcion');
+                    });
+
+                    document.getElementById('CM_descripcion' + '_textarea').addEventListener('blur', (event) => {
+                        blurTextArea('CM_descripcion');
+                    });
+
+                    document.getElementById('CM_descripcion' + '_label').addEventListener('click', (event) => {
+                        document.getElementById('CM_descripcion' + '_textarea').focus();
+                    });
+
+                    document.getElementById('CM_descripcion' + '_textarea').addEventListener('input', (event) => {
+                        clearTextAreaError('CM_descripcion');
+                        focusTextArea('CM_descripcion');
+                    });
+                </script>
+            </div>
+            <div>
+                <div class="w-full pl-2">
+                    <div class="h-8 flex items-center relative w-full">
+                        <input type="checkbox" id="CM_esprincipal_input_checkbox" value="1" class="
+            w-4 h-4
+            text-[#2F8BC7] bg-white
+            border border-[#00000052] 
+            rounded
+            outline-8 focus:outline-8
+            focus:border focus:ring-0 focus:ring-offset-0
+        ">
+                        <label for="CM_esprincipal_input_checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Es principal</label>
+                    </div>
+                    <div>
+                        <span id="CM_esprincipal_error_message" class="
+            hidden
+            text-[#d50000] text-xs
+            pl-2
+        "></span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div x-init="init()" x-data="Components.listbox({ modelName: 'selected', open: false, id: 'CM_modulopadre', selectedIndex: 0, activeIndex: 0, items: [{&quot;id&quot;:-1,&quot;descripcion&quot;:&quot;--Seleccione--&quot;},{&quot;id&quot;:1,&quot;descripcion&quot;:&quot;Sistema&quot;,&quot;codigo&quot;:&quot;00001&quot;}] })">
+                    <div class="relative h-8 w-full">
+                        <button id="CM_modulopadre_select_native" type="button" x-ref="button" @click="onButtonClick()" @keydown.arrow-up.stop.prevent="onButtonClick()" @keydown.arrow-down.stop.prevent="onButtonClick()" @keydown.escape="onEscape()" aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label" aria-expanded="false" class="relative flex items-center w-full h-8 cursor-default rounded border border-[#00000052] bg-white py-1.5 px-2 text-sm">
+                            <span class="flex items-center">
+                                <span x-ref="textSelect" x-text="selected.descripcion" class="block truncate">--Seleccione--</span>
+                            </span>
+                            <span x-ref="icon" class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2 text-[#00000052]">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div x-ref="labelText" class="bg-white px-1.5 absolute text-xxs -top-2 left-1.5 text-[#5f6368]">
+                            Padre
+                        </div>
+                        <div>
+                            <ul x-show="open" class="absolute mt-1 max-h-56 w-full overflow-auto bg-white border border-[#00000052] text-sm" x-max="1" @click.away="onClickAway()" x-description="Select popover, show/hide based on select state." @keydown.enter.stop.prevent="onOptionSelect()" @keydown.space.stop.prevent="onOptionSelect()" @keydown.escape="onEscape()" @keydown.arrow-up.prevent="onArrowUp()" @keydown.arrow-down.prevent="onArrowDown()" x-ref="listbox" tabindex="-1" role="listbox" aria-labelledby="listbox-label" :aria-activedescendant="activeDescendant" style="display: none;">
+                                <template x-for="(item, index) in items">
+                                    <li x-bind:id="'listbox-option-' + index" role="option" x-on:click="choose(index)" @mouseenter="onMouseEnter($event)" x-on:mousemove="onMouseMove($event, index)" @mouseleave="onMouseLeave($event)" class="relative cursor-default select-none pl-3 pr-9 text-black" :class="{ 'text-white bg-[#2F8BC7]': activeIndex === index, 'text-black': !(activeIndex === index) }">
+                                        <div class="flex items-center">
+                                            <span x-text="item.descripcion" class="font-normal block truncate"></span>
+                                        </div>
+                                    </li>
+                                </template>
+                                <li x-bind:id="'listbox-option-' + index" role="option" x-on:click="choose(index)" @mouseenter="onMouseEnter($event)" x-on:mousemove="onMouseMove($event, index)" @mouseleave="onMouseLeave($event)" class="relative cursor-default select-none pl-3 pr-9 text-white bg-[#2F8BC7]" :class="{ 'text-white bg-[#2F8BC7]': activeIndex === index, 'text-black': !(activeIndex === index) }" id="listbox-option-0">
+                                    <div class="flex items-center">
+                                        <span x-text="item.descripcion" class="font-normal block truncate">--Seleccione--</span>
+                                    </div>
+                                </li>
+                                <li x-bind:id="'listbox-option-' + index" role="option" x-on:click="choose(index)" @mouseenter="onMouseEnter($event)" x-on:mousemove="onMouseMove($event, index)" @mouseleave="onMouseLeave($event)" class="relative cursor-default select-none pl-3 pr-9 text-black" :class="{ 'text-white bg-[#2F8BC7]': activeIndex === index, 'text-black': !(activeIndex === index) }" id="listbox-option-1">
+                                    <div class="flex items-center">
+                                        <span x-text="item.descripcion" class="font-normal block truncate">Sistema</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <span x-ref="error" class="
+            hidden
+            text-[#d50000] text-xs
+            pl-2
+        "></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-row-reverse space-x-2 space-x-reverse">
+        <div>
+            <button type="button" onclick="crearModulo()" class="btn-accept">
+                Aceptar
+            </button>
+        </div>
+        <div>
+            <button type="button" wire:click="$emit('closeModal')" class="btn-cancel">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+<div class="grid grid-cols-3 gap-x-4 gap-y-4">
+    <div>a</div>
+    <div>b</div>
+</div>
+<input type="text" autofocus class="h-2 border-2 border-[#2F8BC7] ring-[#2F8BC7] gap-x-4 gap-y-4">
 <input type="text" autofocus class="ring-[#d50000] w-4 h-4 text-[#2F8BC7] bg-white border border-[#00000052] rounded focus:ring-0 focus:ring-offset-0 ring-offset-0">
 
 <div class="mt-8">a</div>
 
 <div class="w-64 ml-8">
-    @include('layouts.style.input_checkbox',[
+    {{--@include('layouts.style.input_checkbox',[
     'id'=>'CM_esprincipal',
     'labelText'=>'Es principal',
-    ])
+    ])--}}
 </div>
 
 <div class="w-64 hidden">

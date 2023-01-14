@@ -18,3 +18,5 @@ php artisan migrate
 
 
 php artisan vendor:publish --tag=livewire-ui-modal-views
+
+php artisan livewire:publish --config (https://stackoverflow.com/questions/69014632/laravel-livewire-script-full-path)

@@ -15,6 +15,7 @@
                 <h5 class="mb-8 lg:mb-3 font-semibold text-slate-900 dark:text-slate-200">{{$modulo->mod_nombre}}</h5>
                 <ul class="space-y-6 lg:space-y-2 border-l border-slate-100 dark:border-slate-800">
                     @foreach($modulo->modulosHijos as $submodulo)
+                    @if($submodulo->mod_estado == \App\Models\Modulo::ESTADO_ACTIVO && $submodulo->mod_eliminado == \App\Models\Define::NO_ELIMINADO)
                     <li>
                         <a class="block border-l pl-4 -ml-px
                         @if('/'.Request::path() === $modulo->mod_url.$submodulo->mod_url)
@@ -26,6 +27,7 @@
                             {{$submodulo->mod_nombre}}
                         </a>
                     </li>
+                    @endif
                     @endforeach
                 </ul>
             </li>

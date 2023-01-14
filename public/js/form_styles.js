@@ -48,18 +48,20 @@ window.Components.listbox = function (e) {
             blurSelectNative(this.id);
         },
         onButtonClick() {
-            if (this.open === false) {
-                this.activeIndex = this.selectedIndex;
-                this.open = true;
-                this.$nextTick((() => {
-                    this.$refs.listbox.children[this.activeIndex].scrollIntoView({
-                        block: "nearest"
-                    });
-                }));
-                focusSelectNative(this.id);
-            } else if (this.open === true) {
-                this.open = false;
-                blurSelectNative(this.id);
+            if (!this.$refs.button.classList.contains('disabled')) {
+                if (this.open === false) {
+                    this.activeIndex = this.selectedIndex;
+                    this.open = true;
+                    this.$nextTick((() => {
+                        this.$refs.listbox.children[this.activeIndex].scrollIntoView({
+                            block: "nearest"
+                        });
+                    }));
+                    focusSelectNative(this.id);
+                } else if (this.open === true) {
+                    this.open = false;
+                    blurSelectNative(this.id);
+                }
             }
         },
         onOptionSelect() {
@@ -250,6 +252,14 @@ function setSelectNativeValue(id, value = '-1') {
     window[id].$refs.textSelect.innerText = window[id].items[index].descripcion;
 }
 
+function disableSelectNative(id) {
+    window[id].$refs.button.classList.add('disabled');
+}
+
+function enableSelectNative(id) {
+    window[id].$refs.button.classList.remove('disabled');
+}
+
 /* Textarea */
 function focusTextArea(id) {
     let textarea = document.getElementById(id + '_textarea');
@@ -362,6 +372,12 @@ function setInputCheckboxError(id, value = 'error') {
     let span = document.getElementById(id + '_error_message');
     span.classList.remove('hidden');
     span.innerHTML = value;
+}
+
+function setOnChangeSelectNative(id, f) {
+    let select = document.getElementById(id + '_input_checkbox');
+    select.addEventListener('change', f, false);
+
 }
 
 function setErrorValue(id, value = 'error') {

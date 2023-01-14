@@ -93,6 +93,7 @@ class Modulo extends Model
 
         $sql = DB::table(self::TABLE, 'MO')
             ->select(
+                'MO.mod_id',
                 'MO.mod_codigo',
                 'MO.mod_nombre',
                 'MO.mod_url',

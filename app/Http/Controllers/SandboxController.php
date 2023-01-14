@@ -11,14 +11,14 @@ class SandboxController extends Controller
 {
     public function index(Request $request)
     {
-        $a = (DB::table(Modulo::TABLE)
+        /* $a = (DB::table(Modulo::TABLE)
             ->select('mod_id')
             ->orderBy('mod_id', 'desc')
             ->first())->mod_id;
         echo '<pre>';
         var_dump($a);
         echo '<pre>';
-        exit();
+        exit(); */
         $modulos = DB::table(Modulo::TABLE)
             ->select('mod_id AS id', 'mod_nombre AS descripcion', 'mod_codigo AS codigo')
             ->where('mod_estado', '=', Modulo::ESTADO_ACTIVO)

@@ -59,6 +59,8 @@ class ModuloController extends Controller
             }
 
             $listadoModulos[] = [
+                'tool' => view('sistema.modulos.tools', ['id' => $item->mod_id])->render(),
+                'id' => $item->mod_id,
                 'codigo' => $item->mod_codigo,
                 'nombre' => $item->mod_nombre,
                 'url' => $item->mod_url,

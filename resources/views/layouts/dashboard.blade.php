@@ -27,7 +27,7 @@
 
     <script src="https://kit.fontawesome.com/4f91a515f0.js" crossorigin="anonymous"></script>
 
-    <script src="{{asset('/js/inputstyle.js')}}"></script>
+    <script src="{{asset('/js/form_styles.js')}}"></script>
 
     @livewire('livewire-ui-modal')
     @yield('head')
