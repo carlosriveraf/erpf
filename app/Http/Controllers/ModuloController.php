@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Define;
 use App\Models\Modulo;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ModuloController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $strParams = session()->get('mod_modulos.listado_modulos.filters');
 
@@ -37,7 +38,7 @@ class ModuloController extends Controller
         ]);
     }
 
-    public function listadoModulos(Request $request)
+    public function listadoModulos(Request $request): string
     {
         $callback = $request->input('callback');
 
@@ -59,7 +60,7 @@ class ModuloController extends Controller
             }
 
             $listadoModulos[] = [
-                'tool' => view('sistema.modulos.tools', ['id' => $item->mod_id])->render(),
+                'tool' => view('sistema.modulos.tools', ['item' => $item])->render(),
                 'id' => $item->mod_id,
                 'codigo' => $item->mod_codigo,
                 'nombre' => $item->mod_nombre,
@@ -81,7 +82,7 @@ class ModuloController extends Controller
         return $callback . '(' . json_encode($response) . ')';
     }
 
-    public function jsonEstados()
+    public function jsonEstados(): array
     {
         $jsonEstado[] = ['id' => Modulo::ESTADO_INACTIVO, 'name' => Modulo::FORMATO_ESTADO_INACTIVO];
         $jsonEstado[] = ['id' => Modulo::ESTADO_ACTIVO, 'name' => Modulo::FORMATO_ESTADO_ACTIVO];
@@ -89,7 +90,7 @@ class ModuloController extends Controller
         return $jsonEstado;
     }
 
-    public function store(Request $request)
+    public function store(Request $request): string
     {
         $error = [];
         if (null === $request->post('CM_nombre') || $request->post('CM_nombre') === '') {
@@ -147,5 +148,69 @@ class ModuloController extends Controller
         ]);
 
         return json_encode(['status' => Define::STATUS_OK, 'message' => 'Módulo creado con éxito']);
+    }
+
+    public function cambiarEstado(Request $request): string
+    {
+        $error = [];
+        if (null === $request->post('codigo') || $request->post('codigo') === '') {
+            $error['codigo'] = '* Indique el código.';
+        }
+        if (null === $request->post('estado') || $request->post('estado') === '') {
+            $error['estado'] = '* Indique el estado.';
+        }
+        if (!in_array($request->post('estado'), [Modulo::ESTADO_ACTIVO, Modulo::ESTADO_INACTIVO])) {
+            $error['estado'] = '* Estado no válido.';
+        }
+        if (!Modulo::existsModuloByCodigo($request->post('codigo'))) {
+            $error['codigo'] = '* Módulo no existe.';
+        }
+
+        if (count($error) > 0) {
+            return json_encode(['status' => Define::STATUS_ERROR, 'error' => $error]);
+        }
+
+        $update = Modulo::actualizarModuloByCodigo($request->post('codigo'), [
+            'mod_estado' => $request->post('estado'),
+            'mod_usu_id_modificado' => Auth::id(),
+            'mod_ip_modificado' => $request->ip(),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        if (!$update) {
+            $error['codigo'] = '* Error al actualizar el estado.';
+            return json_encode(['status' => Define::STATUS_ERROR, 'error' => $error]);
+        }
+
+        return json_encode(['status' => Define::STATUS_OK, 'message' => 'Actualización exitosa.']);
+    }
+
+    public function eliminar(Request $request): string
+    {
+        $error = [];
+        if (null === $request->post('codigo') || $request->post('codigo') === '') {
+            $error['codigo'] = '* Indique el código.';
+        }
+        if (!Modulo::existsModuloByCodigo($request->post('codigo'))) {
+            $error['codigo'] = '* Módulo no existe.';
+        }
+
+        if (count($error) > 0) {
+            return json_encode(['status' => Define::STATUS_ERROR, 'error' => $error]);
+        }
+
+        $eliminar = Modulo::actualizarModuloByCodigo($request->post('codigo'), [
+            'mod_eliminado' => Define::ELIMINADO,
+            'mod_usu_id_modificado' => Auth::id(),
+            'mod_ip_modificado' => $request->ip(),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        if (!$eliminar) {
+            $error['codigo'] = '* Error al eliminar el módulo.';
+            return json_encode(['status' => Define::STATUS_ERROR, 'error' => $error]);
+        }
+
+        return json_encode(['status' => Define::STATUS_OK, 'message' => 'Eliminación exitosa.']);
     }
 }

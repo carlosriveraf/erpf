@@ -11,6 +11,8 @@ class SandboxController extends Controller
 {
     public function index(Request $request)
     {
+        var_dump(json_encode(['status' => Define::STATUS_OK, 'message' => 'Módulo creado con éxito']));
+        exit();
         /* $a = (DB::table(Modulo::TABLE)
             ->select('mod_id')
             ->orderBy('mod_id', 'desc')

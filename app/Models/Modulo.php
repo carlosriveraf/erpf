@@ -4,8 +4,9 @@ namespace App\Models;
 
 use DateTime;
 use Exception;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Modulo extends Model
@@ -48,12 +49,12 @@ class Modulo extends Model
         'mod_ip_modificado',
     ];
 
-    public function modulosHijos()
+    public function modulosHijos(): HasMany
     {
         return $this->hasMany(Modulo::class, 'mod_padre_id', 'mod_id');
     }
 
-    public static function getModulos(string|Object $params = '')
+    public static function getModulos(string|Object $params = ''): array
     {
         $listaCampos = [
             'codigo' => 'MO.mod_codigo',
@@ -236,7 +237,7 @@ class Modulo extends Model
         return ['result' => $sql->get(), 'total' => $total];
     }
 
-    public static function getModulosPadre()
+    public static function getModulosPadre(): Collection
     {
         return DB::table(self::TABLE)
             ->select('mod_id AS id', 'mod_nombre AS descripcion', 'mod_codigo AS codigo')
@@ -247,14 +248,14 @@ class Modulo extends Model
             ->get();
     }
 
-    public static function existsModuloByCodigo($codigo): bool
+    public static function existsModuloByCodigo(string $codigo): bool
     {
         return DB::table(self::TABLE)
             ->where('mod_codigo', '=', $codigo)
             ->exists();
     }
 
-    public static function esActivoModuloByCodigo($codigo): bool
+    public static function esActivoModuloByCodigo(string $codigo): bool
     {
         return DB::table(self::TABLE)
             ->where('mod_codigo', '=', $codigo)
@@ -262,7 +263,7 @@ class Modulo extends Model
             ->exists();
     }
 
-    public static function esEliminadoModuloByCodigo($codigo): bool
+    public static function esEliminadoModuloByCodigo(string $codigo): bool
     {
         return DB::table(self::TABLE)
             ->where('mod_codigo', '=', $codigo)
@@ -291,6 +292,21 @@ class Modulo extends Model
         } catch (Exception $e) {
             DB::rollback();
             return 0;
+        }
+    }
+
+    public static function actualizarModuloByCodigo(string $codigo, array $data): bool
+    {
+        DB::beginTransaction();
+        try {
+            DB::table(self::TABLE)
+                ->where('mod_codigo', $codigo)
+                ->update($data);
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return false;
         }
     }
 }

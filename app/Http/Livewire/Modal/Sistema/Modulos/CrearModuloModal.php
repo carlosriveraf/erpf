@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Modal\Sistema\Modulos;
 
 use App\Models\Modulo;
 use Illuminate\Contracts\View\View;
-use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 
 class CrearModuloModal extends ModalComponent

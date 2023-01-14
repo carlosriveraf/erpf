@@ -34,5 +34,6 @@ Route::middleware([
     Route::post('/sistema/modulos/listado-modulos', [ModuloController::class, 'listadoModulos'])->name('sistema.modulos.listado_modulos');
     Route::post('/sistema/modulos/listado-modulos/json-estados', [ModuloController::class, 'jsonEstados'])->name('sistema.modulos.listado_modulos.json_estados');
     Route::post('/sistema/modulos', [ModuloController::class, 'store'])->name('sistema.modulos.store');
-    //Route::get('/sistema/modulos/crear', [ModuloController::class, 'create'])->name('sistema.modulos.create');
+    Route::post('/sistema/modulos/cambiar-estado', [ModuloController::class, 'cambiarEstado'])->name('sistema.modulos.cambiar_estado');
+    Route::post('/sistema/modulos/eliminar', [ModuloController::class, 'eliminar'])->name('sistema.modulos.eliminar');
 });

@@ -283,5 +283,46 @@
                 }
             });
         }
+
+        function cambiarEstado(codigo, estado) {
+            fetch('{{ route('sistema.modulos.cambiar_estado') }}', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: new URLSearchParams({
+                    _token: '{{ csrf_token() }}',
+                    codigo: codigo,
+                    estado: estado,
+                }),
+            }).then(response => response.json()).then(data => {
+                if (data.status == '{{ \App\Models\Define::STATUS_ERROR }}') {
+
+                } else if (data.status == '{{ \App\Models\Define::STATUS_OK }}') {
+
+                }
+                mainDataSourceListadoModulos.read();
+            });
+        }
+
+        function eliminar(codigo) {
+            fetch('{{ route('sistema.modulos.eliminar') }}', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+                body: new URLSearchParams({
+                    _token: '{{ csrf_token() }}',
+                    codigo: codigo,
+                }),
+            }).then(response => response.json()).then(data => {
+                if (data.status == '{{ \App\Models\Define::STATUS_ERROR }}') {
+
+                } else if (data.status == '{{ \App\Models\Define::STATUS_OK }}') {
+
+                }
+                mainDataSourceListadoModulos.read();
+            });
+        }
     </script>
 @endsection
