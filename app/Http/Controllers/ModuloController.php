@@ -51,7 +51,7 @@ class ModuloController extends Controller
         $rsModulos = Modulo::getModulos($params);
 
         $listadoModulos = [];
-        foreach ($rsModulos['result'] as $key => $item) {
+        foreach ($rsModulos['result'] as $item) {
             $tpl_estado = '';
             if ($item->mod_estado == Modulo::ESTADO_INACTIVO) {
                 $tpl_estado = Modulo::FORMATO_ESTADO_INACTIVO;

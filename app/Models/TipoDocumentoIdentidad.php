@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class TipoDocumentoIdentidad extends Model
 {
@@ -26,4 +27,21 @@ class TipoDocumentoIdentidad extends Model
      * @var string
      */
     protected $primaryKey = 'tdi_id';
+
+    public static function getTipoDocumentoIdentidad(string|Object $params = ''): array
+    {
+        $listaCampos = [];
+
+        $sql = DB::table(self::TABLE, 'TDI')
+            ->select(
+                'TDI.tdi_id',
+                'TDI.tdi_codigo',
+                'TDI.tdi_descripcion'
+            );
+
+
+        $data = Define::filter($listaCampos, $sql, $params, 'tdi_descripcion', 'asc');
+
+        return ['result' => $data['records'], 'total' => $data['total']];
+    }
 }

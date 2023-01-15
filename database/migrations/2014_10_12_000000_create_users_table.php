@@ -32,10 +32,16 @@ return new class extends Migration
             $table->string('usu_profile_photo_path', 2048)->nullable();
             $table->unsignedTinyInteger('usu_eliminado')->default(Define::NO_ELIMINADO);
             $table->unsignedTinyInteger('usu_estado')->default(User::ESTADO_INACTIVO);
+            $table->unsignedBigInteger('usu_usu_id_registro');
+            $table->unsignedBigInteger('usu_usu_id_modificado');
+            $table->ipAddress('usu_ip_registro');
+            $table->ipAddress('usu_ip_modificado');
             $table->timestamps();
 
             $table->unique(['usu_tdi_id', 'usu_tdi_numero']);
             $table->foreign('usu_tdi_id')->references('tdi_id')->on(TipoDocumentoIdentidad::TABLE);
+            $table->foreign('usu_usu_id_registro')->references('usu_id')->on(User::TABLE);
+            $table->foreign('usu_usu_id_modificado')->references('usu_id')->on(User::TABLE);
         });
     }
 

@@ -70,7 +70,7 @@ class Modulo extends Model
             'usuario_modificado' => DB::raw("CONCAT(USM.usu_nombres,' ',USM.usu_apellido_paterno,' ',USM.usu_apellido_materno)"),
         ];
 
-        $fechas = [
+        /* $fechas = [
             'fecha_registro',
             'fecha_modificado',
         ];
@@ -90,7 +90,7 @@ class Modulo extends Model
             'doesnotcontain' => ['expr' => 'not like', 'val' => '%%%s%%'],
             'isempty' => ['expr' => '=', 'val' => ''],
             'isnotempty' => ['expr' => '!=', 'val' => '']
-        ];
+        ]; */
 
         $sql = DB::table(self::TABLE, 'MO')
             ->select(
@@ -109,12 +109,14 @@ class Modulo extends Model
             )
             ->join(User::TABLE . ' AS USR', 'MO.mod_usu_id_registro', '=', 'USR.usu_id')
             ->join(User::TABLE . ' AS USM', 'MO.mod_usu_id_modificado', '=', 'USM.usu_id')
-            ->where('mod_eliminado', '=', Define::NO_ELIMINADO);
+            ->where('MO.mod_eliminado', '=', Define::NO_ELIMINADO);
 
-        $orderColumn = 'mod_id';
-        $orderSort = 'desc';
+        /* $orderColumn = 'mod_id';
+        $orderSort = 'desc'; */
 
-        if ($params != '' && is_object($params)) {
+        $data = Define::filter($listaCampos, $sql, $params, 'mod_id', 'desc');
+
+        /* if ($params != '' && is_object($params)) {
             if (isset($params->filter) && is_object($params->filter)) {
                 if ($params->filter->logic == 'or') {
                     $tmp = clone $params->filter;
@@ -228,13 +230,13 @@ class Modulo extends Model
             }
         } else {
             $sql = $sql->orderBy($orderColumn, $orderSort);
-        }
+        } */
 
-        $total = count($sql->get());
+        /* $total = count($sql->get());
 
-        $sql = $sql->skip($params->skip)->take($params->take);
+        $sql = $sql->skip($params->skip)->take($params->take); */
 
-        return ['result' => $sql->get(), 'total' => $total];
+        return ['result' => $data['records'], 'total' => $data['total']];
     }
 
     public static function getModulosPadre(): Collection

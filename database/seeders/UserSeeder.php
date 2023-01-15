@@ -26,6 +26,10 @@ class UserSeeder extends Seeder
             'usu_email' => 'carlos_2017_1@hotmail.com',
             'usu_password' => Hash::make('123'),
             'usu_estado' => User::ESTADO_ACTIVO,
+            'usu_usu_id_registro' => 1,
+            'usu_usu_id_modificado' => 1,
+            'usu_ip_registro' => 'Seeders',
+            'usu_ip_modificado' => 'Seeders',
         ]);
     }
 }
